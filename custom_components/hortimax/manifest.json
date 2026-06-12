@@ -1,0 +1,12 @@
+{
+  "domain": "hortimax",
+  "name": "Ridder HortiMaX Pro (HortOS)",
+  "codeowners": ["@wildekek"],
+  "config_flow": true,
+  "documentation": "https://github.com/wildekek/ha-hortimax",
+  "integration_type": "hub",
+  "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/wildekek/ha-hortimax/issues",
+  "requirements": [],
+  "version": "0.1.0"
+}

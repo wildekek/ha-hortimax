@@ -1,0 +1,48 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Verbinden met Ridder HortOS",
+        "description": "Voer de API-sleutel voor de Ridder HortOS Automation API in. Deze kun je aanvragen bij je Ridder-accountmanager.",
+        "data": {
+          "api_key": "API-sleutel",
+          "base_url": "API-basis-URL"
+        },
+        "data_description": {
+          "base_url": "Gebruik de standaardwaarde voor de HortOS cloud-API, of het adres van de on-premise API in je lokale netwerk."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Opnieuw aanmelden bij Ridder HortOS",
+        "description": "De API-sleutel is geweigerd. Voer een geldige API-sleutel in.",
+        "data": {
+          "api_key": "API-sleutel"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Kan geen verbinding maken met de HortOS API",
+      "invalid_auth": "Ongeldige API-sleutel",
+      "no_devices": "Aanmelden gelukt, maar er zijn geen apparaten beschikbaar voor deze API-sleutel",
+      "unknown": "Onverwachte fout"
+    },
+    "abort": {
+      "already_configured": "Deze HortOS-organisatie is al geconfigureerd",
+      "reauth_successful": "Opnieuw aanmelden is gelukt"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "HortiMaX Pro-opties",
+        "data": {
+          "scan_interval": "Polling-interval (seconden)",
+          "source_types": "Op te nemen brontypes"
+        },
+        "data_description": {
+          "source_types": "Er worden alleen sensoren aangemaakt voor de geselecteerde brontypes; gedeselecteerde types worden verwijderd. Alles (of niets) selecteren neemt alles op."
+        }
+      }
+    }
+  }
+}

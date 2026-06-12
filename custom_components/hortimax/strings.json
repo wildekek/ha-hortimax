@@ -1,0 +1,48 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to Ridder HortOS",
+        "description": "Enter the API key for the Ridder HortOS Automation API. You can request one from your Ridder account manager.",
+        "data": {
+          "api_key": "API key",
+          "base_url": "API base URL"
+        },
+        "data_description": {
+          "base_url": "Use the default for the HortOS cloud API, or the address of the on-premise API on your local network."
+        }
+      },
+      "reauth_confirm": {
+        "title": "Re-authenticate with Ridder HortOS",
+        "description": "The API key was rejected. Enter a valid API key.",
+        "data": {
+          "api_key": "API key"
+        }
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to the HortOS API",
+      "invalid_auth": "Invalid API key",
+      "no_devices": "Authentication succeeded but no devices are available for this API key",
+      "unknown": "Unexpected error"
+    },
+    "abort": {
+      "already_configured": "This HortOS organisation is already configured",
+      "reauth_successful": "Re-authentication was successful"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "HortiMaX Pro options",
+        "data": {
+          "scan_interval": "Polling interval (seconds)",
+          "source_types": "Source types to include"
+        },
+        "data_description": {
+          "source_types": "Sensors are only created for the selected source types; deselected types are removed. Selecting all (or none) includes everything."
+        }
+      }
+    }
+  }
+}
