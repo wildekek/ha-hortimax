@@ -54,6 +54,9 @@ READOUT_ICONS: Final[dict[str, str]] = {
     "absolutehumidity": "mdi:water-opacity",
     # Radiation sum (J/cm²) has no matching HA device class.
     "radiationsum": "mdi:sun-wireless",
+    # Humidity deficit (g/kg moisture shortfall) has no matching HA device
+    # class — it is not a pressure, so the VPD/pressure classes do not apply.
+    "humiditydeficit": "mdi:water-minus",
 }
 
 # CardinalWindDirection is an enumeration-coded Scalar readout: the HortOS
