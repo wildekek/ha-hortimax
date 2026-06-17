@@ -68,7 +68,7 @@ HortOS data is two levels deep — controllers, then *sources* within them (weat
 
 Per-readout special cases keyed by the lowercased identifier subject (`_readout_subject()`, the part before the `-kind` suffix) are also handled in `_describe()` / `native_value`: `TIME_OF_DAY_READOUTS` (sunrise/sunset, seconds-since-local-midnight → `timestamp`) and `WIND_DIRECTION_SUBJECT` (see below).
 
-**Convention:** once a readout's meaning is understood, give it a proper `device_class` (which provides an automatic icon) and/or an explicit `icon` in `READOUT_ICONS`. A sensor that renders with **no icon** (no device class, no icon override) marks a readout that is still unclassified and worth investigating — treat icon-less sensors as the TODO list.
+**Convention:** once a readout's meaning is understood, give it a proper `device_class` (which provides an automatic icon) and/or an explicit `icon` in `READOUT_ICONS`. A sensor that renders with **no icon** (no device class, no icon override) marks a readout that is still unclassified and worth investigating — treat icon-less sensors as the TODO list. Such sensors are also registered **disabled by default** (`_attr_entity_registry_enabled_default = False` in the sensor `__init__`), so classifying one (device class or icon) is what enables it on new installs.
 
 ### Enum-coded Scalar readouts (gotcha)
 
