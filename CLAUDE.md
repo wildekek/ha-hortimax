@@ -66,6 +66,16 @@ HortOS data is two levels deep — controllers, then *sources* within them (weat
 - `UNIT_DEVICE_CLASS` covers classes that follow purely from the unit. Cases that also need the readout identifier — humidity, wind vs. generic speed, gas, energy/gas daily totals — are decided inline in `_describe()`.
 - `UNIT_PRECISION` is display-only; recorded states keep full precision (the API emits float32-converted doubles).
 
+Per-readout special cases keyed by the lowercased identifier subject (`_readout_subject()`, the part before the `-kind` suffix) are also handled in `_describe()` / `native_value`: `TIME_OF_DAY_READOUTS` (sunrise/sunset, seconds-since-local-midnight → `timestamp`) and `WIND_DIRECTION_SUBJECT` (see below).
+
+### Enum-coded Scalar readouts (gotcha)
+
+Some readouts come through with `unitIdentifier: "Scalar"` and a `Double` value, but the number is **not a measurement** — it is an enumeration member id from a HortOS table the API does not expose (the readout definition's `min`/`max` are null and there is no enumeration endpoint in the Postman collection; the official app resolves the labels). They surface as a meaningless large integer (e.g. ~8780s).
+
+`CardinalWindDirection-Measured` is the one decoded so far: over a day it took exactly the 16 contiguous codes 8772–8787 (the 16-point compass), and two readings cross-checked against the official app (8782=SW, 8783=WSW) anchored 8772 = N, clockwise in 22.5° steps. It is mapped to a `wind_direction` degrees sensor (`measurement_angle` state class) via the `WIND_DIRECTION_*` constants in `const.py`; only `WIND_DIRECTION_CODE_NORTH` would change if a controller used a different id base.
+
+`WeatherStatus-Measured` is the same kind of enum code (seen ~8789) but is **undecoded** — there is no known source for its code→label table (not in the app UI or the docs), so it is intentionally left as the raw scalar. To decode a future one, pull ~24h of history for the readout (`GET /v1/readouts/device/{dev}/values/{id}/{sourceName}/{sourceType}/{start}/{end}`, max 24h window, response under a `readouts` wrapper) to find the contiguous code range, then anchor at least two codes against a known reference.
+
 ### Naming
 
 `naming.py` turns CamelCase HortOS identifiers (`VentPositionLeewardSide-Measured`) into friendly names, dropping the default `Measured` kind and parenthesising others. `disambiguate_source_names` resolves clashing source display names by appending the prettified source type, then a trailing number from the technical name if still ambiguous.
