@@ -46,6 +46,14 @@ TIME_OF_DAY_READOUTS: Final[frozenset[str]] = frozenset(
     {"sunrisetoday", "sunsettoday"}
 )
 
+# Per-readout icon overrides, for readouts that have no device class (and thus
+# no automatic icon) but read better with a hint. Keyed by the lowercased
+# identifier subject (see naming.py). Absolute humidity is a g/kg mixing
+# ratio, so it gets no humidity device class — just a friendlier icon.
+READOUT_ICONS: Final[dict[str, str]] = {
+    "absolutehumidity": "mdi:water-opacity",
+}
+
 # Maps HortOS unit identifiers to Home Assistant units of measurement.
 # The first block is the complete set observed on a live HortOS Multima
 # installation; the rest are plausible variants kept as aliases. Unknown

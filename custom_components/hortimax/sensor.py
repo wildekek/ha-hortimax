@@ -22,6 +22,7 @@ from .const import (
     DIMENSIONLESS_UNITS,
     DOMAIN,
     MANUFACTURER,
+    READOUT_ICONS,
     TIME_OF_DAY_READOUTS,
     UNIT_DEVICE_CLASS,
     UNIT_MAP,
@@ -140,6 +141,7 @@ class HortimaxReadoutSensor(CoordinatorEntity[HortimaxCoordinator], SensorEntity
 
         self._attr_unique_id = f"{device_id}::{key}"
         self._attr_name = readout_display_name(readout.identifier)
+        self._attr_icon = READOUT_ICONS.get(_readout_subject(readout.identifier))
         # Static settings readouts go to the diagnostic section so the
         # actual measurements stand out on the device page.
         if readout.identifier.lower().endswith("-actualsetting"):
