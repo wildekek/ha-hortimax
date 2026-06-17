@@ -12,7 +12,7 @@ from datetime import datetime, timedelta, timezone
 import sys
 
 from homeassistant.components.sensor import SensorDeviceClass, SensorStateClass
-from homeassistant.const import UnitOfTemperature
+from homeassistant.const import DEGREE, UnitOfTemperature
 from homeassistant.util import dt as dt_util
 
 sys.path.insert(0, ".")
@@ -96,6 +96,27 @@ def main() -> None:
         assert isinstance(value, datetime), type(value)
         assert value == expected, (identifier, value, expected)
         print(f"OK {identifier}: {seconds} s -> {value.isoformat()}")
+
+    # CardinalWindDirection: enum code -> compass bearing in degrees.
+    for code, expected_deg in (
+        (8772, 0.0),     # N
+        (8782, 225.0),   # SW
+        (8783, 247.5),   # WSW
+        (8787, 337.5),   # NNW
+    ):
+        readout = _readout(
+            identifier="CardinalWindDirection-Measured",
+            value=float(code),
+            source_type="WeatherStation",
+            source_name="Weather station 001",
+        )
+        unit, device_class, state_class, _ = _describe(readout)
+        assert unit == DEGREE
+        assert device_class is SensorDeviceClass.WIND_DIRECTION
+        assert state_class is SensorStateClass.MEASUREMENT_ANGLE
+        sensor = _build_sensor(readout)
+        assert sensor.native_value == expected_deg, (code, sensor.native_value)
+        print(f"OK CardinalWindDirection {code} -> {expected_deg}°")
 
     # Regression: a regular mapped measurement is unaffected.
     temp = _readout(

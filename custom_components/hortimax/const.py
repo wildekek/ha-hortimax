@@ -54,6 +54,17 @@ READOUT_ICONS: Final[dict[str, str]] = {
     "absolutehumidity": "mdi:water-opacity",
 }
 
+# CardinalWindDirection is an enumeration-coded Scalar readout: the HortOS
+# cloud assigns the 16 compass points contiguous member ids rather than a
+# bearing. On the HortiMaX controller these are 8772 (N) .. 8787 (NNW), going
+# clockwise in 22.5° steps — confirmed against the official app (8782=SW,
+# 8783=WSW). We expose it as a wind-direction angle in degrees. If another
+# controller turns out to use a different id base, only CODE_NORTH changes.
+WIND_DIRECTION_SUBJECT: Final = "cardinalwinddirection"
+WIND_DIRECTION_CODE_NORTH: Final = 8772
+WIND_DIRECTION_SECTORS: Final = 16
+WIND_DIRECTION_STEP_DEGREES: Final = 360 / WIND_DIRECTION_SECTORS
+
 # Maps HortOS unit identifiers to Home Assistant units of measurement.
 # The first block is the complete set observed on a live HortOS Multima
 # installation; the rest are plausible variants kept as aliases. Unknown

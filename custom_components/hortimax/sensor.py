@@ -10,7 +10,7 @@ from homeassistant.components.sensor import (
     SensorEntity,
     SensorStateClass,
 )
-from homeassistant.const import EntityCategory, UnitOfSpeed, UnitOfVolume
+from homeassistant.const import DEGREE, EntityCategory, UnitOfSpeed, UnitOfVolume
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
@@ -27,6 +27,10 @@ from .const import (
     UNIT_DEVICE_CLASS,
     UNIT_MAP,
     UNIT_PRECISION,
+    WIND_DIRECTION_CODE_NORTH,
+    WIND_DIRECTION_SECTORS,
+    WIND_DIRECTION_STEP_DEGREES,
+    WIND_DIRECTION_SUBJECT,
 )
 from .coordinator import HortimaxCoordinator, HortimaxReadout
 from .naming import readout_display_name
@@ -79,10 +83,20 @@ def _describe(
     """
     if readout.value_type != "Double":
         return None, None, None, None
+    subject = _readout_subject(readout.identifier)
     # Seconds-since-midnight readouts are surfaced as timestamps; native_value
     # turns the second count into today's datetime.
-    if _readout_subject(readout.identifier) in TIME_OF_DAY_READOUTS:
+    if subject in TIME_OF_DAY_READOUTS:
         return None, SensorDeviceClass.TIMESTAMP, None, None
+    # CardinalWindDirection is an enum code; native_value turns it into a
+    # bearing in degrees (statistics use the circular mean for this class).
+    if subject == WIND_DIRECTION_SUBJECT:
+        return (
+            DEGREE,
+            SensorDeviceClass.WIND_DIRECTION,
+            SensorStateClass.MEASUREMENT_ANGLE,
+            None,
+        )
     raw_unit = readout.unit
     if not raw_unit or raw_unit in DIMENSIONLESS_UNITS:
         return None, None, None, 0
@@ -189,9 +203,16 @@ class HortimaxReadoutSensor(CoordinatorEntity[HortimaxCoordinator], SensorEntity
                 number = float(readout.value)
             except (TypeError, ValueError):
                 return None
-            if _readout_subject(readout.identifier) in TIME_OF_DAY_READOUTS:
+            subject = _readout_subject(readout.identifier)
+            if subject in TIME_OF_DAY_READOUTS:
                 # Seconds since local midnight -> today's timestamp.
                 return dt_util.start_of_local_day() + timedelta(seconds=number)
+            if subject == WIND_DIRECTION_SUBJECT:
+                # Enum code -> compass bearing in degrees.
+                sector = (round(number) - WIND_DIRECTION_CODE_NORTH) % (
+                    WIND_DIRECTION_SECTORS
+                )
+                return sector * WIND_DIRECTION_STEP_DEGREES
             return number
         return str(readout.value)
 
