@@ -38,6 +38,14 @@ MIN_SCAN_INTERVAL: Final = 15
 # no statistics (they are mostly status/override codes).
 DIMENSIONLESS_UNITS: Final = {"Scalar", "None"}
 
+# Readouts that report a time of day as seconds since (local) midnight, e.g.
+# SunriseToday = 19145 -> 05:19. HA renders these far better as a timestamp
+# than as a raw second count. Keyed by the lowercased identifier subject
+# (the part before the '-kind' suffix, see naming.py).
+TIME_OF_DAY_READOUTS: Final[frozenset[str]] = frozenset(
+    {"sunrisetoday", "sunsettoday"}
+)
+
 # Maps HortOS unit identifiers to Home Assistant units of measurement.
 # The first block is the complete set observed on a live HortOS Multima
 # installation; the rest are plausible variants kept as aliases. Unknown

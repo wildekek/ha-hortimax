@@ -7,3 +7,6 @@ postman/
 # Local HA test instance (contains the API key in .storage)
 ha-config/
 .DS_Store
+
+# Personal working notes, not for the repo
+todo.md

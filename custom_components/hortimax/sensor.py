@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta
 from typing import Any
 
 from homeassistant.components.sensor import (
@@ -14,12 +15,14 @@ from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
+from homeassistant.util import dt as dt_util
 
 from . import HortimaxConfigEntry
 from .const import (
     DIMENSIONLESS_UNITS,
     DOMAIN,
     MANUFACTURER,
+    TIME_OF_DAY_READOUTS,
     UNIT_DEVICE_CLASS,
     UNIT_MAP,
     UNIT_PRECISION,
@@ -55,6 +58,11 @@ async def async_setup_entry(
     entry.async_on_unload(coordinator.async_add_listener(_add_new_entities))
 
 
+def _readout_subject(identifier: str) -> str:
+    """The identifier minus its '-kind' suffix, lowercased (see naming.py)."""
+    return identifier.partition("-")[0].lower()
+
+
 def _describe(
     readout: HortimaxReadout,
 ) -> tuple[
@@ -70,6 +78,10 @@ def _describe(
     """
     if readout.value_type != "Double":
         return None, None, None, None
+    # Seconds-since-midnight readouts are surfaced as timestamps; native_value
+    # turns the second count into today's datetime.
+    if _readout_subject(readout.identifier) in TIME_OF_DAY_READOUTS:
+        return None, SensorDeviceClass.TIMESTAMP, None, None
     raw_unit = readout.unit
     if not raw_unit or raw_unit in DIMENSIONLESS_UNITS:
         return None, None, None, 0
@@ -166,15 +178,19 @@ class HortimaxReadoutSensor(CoordinatorEntity[HortimaxCoordinator], SensorEntity
         return super().available and self._readout is not None
 
     @property
-    def native_value(self) -> float | str | None:
+    def native_value(self) -> float | str | datetime | None:
         readout = self._readout
         if readout is None or readout.value is None:
             return None
         if readout.value_type == "Double":
             try:
-                return float(readout.value)
+                number = float(readout.value)
             except (TypeError, ValueError):
                 return None
+            if _readout_subject(readout.identifier) in TIME_OF_DAY_READOUTS:
+                # Seconds since local midnight -> today's timestamp.
+                return dt_util.start_of_local_day() + timedelta(seconds=number)
+            return number
         return str(readout.value)
 
     @property
