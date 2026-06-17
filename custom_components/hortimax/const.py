@@ -52,6 +52,8 @@ TIME_OF_DAY_READOUTS: Final[frozenset[str]] = frozenset(
 # ratio, so it gets no humidity device class — just a friendlier icon.
 READOUT_ICONS: Final[dict[str, str]] = {
     "absolutehumidity": "mdi:water-opacity",
+    # Radiation sum (J/cm²) has no matching HA device class.
+    "radiationsum": "mdi:sun-wireless",
 }
 
 # CardinalWindDirection is an enumeration-coded Scalar readout: the HortOS
