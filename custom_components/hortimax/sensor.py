@@ -182,6 +182,13 @@ class HortimaxReadoutSensor(CoordinatorEntity[HortimaxCoordinator], SensorEntity
             self._attr_suggested_display_precision,
         ) = _describe(readout)
 
+        # Readouts we have not classified (no device class and no icon) are
+        # obscure status/override codes; create them disabled so they don't
+        # clutter the device page. Classifying one — a device class or an
+        # entry in READOUT_ICONS — re-enables it for new installs.
+        if self._attr_device_class is None and self._attr_icon is None:
+            self._attr_entity_registry_enabled_default = False
+
     @property
     def _readout(self) -> HortimaxReadout | None:
         device_data = self.coordinator.data.get(self._device_id)

@@ -132,6 +132,19 @@ def main() -> None:
     assert sensor.native_value == 21.345
     print("OK AirTemperature stays a numeric temperature measurement")
 
+    # Unclassified readouts (no device class, no icon) are disabled by default;
+    # classified ones (device class or icon) stay enabled.
+    override = _readout(identifier="Override-Measured", value=6561.0, unit="Scalar")
+    override_sensor = _build_sensor(override)
+    assert override_sensor.device_class is None and override_sensor.icon is None
+    assert override_sensor.entity_registry_enabled_default is False
+    assert _build_sensor(temp).entity_registry_enabled_default is True
+    abs_hum = _readout(
+        identifier="AbsoluteHumidity-Measured", value=10.0, unit="Gram/Kilogram"
+    )
+    assert _build_sensor(abs_hum).entity_registry_enabled_default is True
+    print("OK unclassified readouts are disabled by default")
+
     print("\nAll sensor smoke tests passed.")
 
 
