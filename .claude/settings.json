@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git push*)",
+            "command": "printf %s '{\"hookSpecificOutput\":{\"hookEventName\":\"PreToolUse\",\"additionalContext\":\"Versioning reminder: before completing this push, bump the version in custom_components/hortimax/manifest.json and create a matching v-prefixed git tag (e.g. v0.1.0), then push the tag (git push --follow-tags). This is a reminder, not a block.\"}}'"
+          }
+        ]
+      }
+    ]
+  }
+}
