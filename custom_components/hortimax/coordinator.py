@@ -81,6 +81,8 @@ class HortimaxCoordinator(DataUpdateCoordinator[dict[str, HortimaxDeviceData]]):
         )
         self.client = client
         self.device_names: list[str] = []
+        # Device identifier -> friendly label from /v1/devices/info.
+        self.device_labels: dict[str, str] = {}
         # Source types selected in the options; empty set means all.
         self.selected_source_types: set[str] = set(
             entry.options.get(CONF_SOURCE_TYPES) or []
@@ -96,6 +98,16 @@ class HortimaxCoordinator(DataUpdateCoordinator[dict[str, HortimaxDeviceData]]):
             raise ConfigEntryAuthFailed(str(err)) from err
         except HortimaxApiError as err:
             raise UpdateFailed(f"Error setting up HortOS API: {err}") from err
+
+        # Friendly labels are cosmetic; tolerate this call failing.
+        try:
+            self.device_labels = {
+                name: label
+                for item in await self.client.async_get_devices_info()
+                if (name := item.get("name")) and (label := item.get("label"))
+            }
+        except HortimaxApiError as err:
+            _LOGGER.debug("Could not fetch device info for labels: %s", err)
 
     async def _async_update_data(self) -> dict[str, HortimaxDeviceData]:
         try:

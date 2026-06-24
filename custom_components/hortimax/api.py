@@ -157,6 +157,10 @@ class HortimaxApiClient:
         """Return the identifiers of the available devices."""
         return await self._async_get("/v1/devices")
 
+    async def async_get_devices_info(self) -> list[dict[str, Any]]:
+        """Return available devices and their info (incl. the friendly label)."""
+        return await self._async_get("/v1/devices/info")
+
     async def async_get_devices_health(self) -> list[dict[str, Any]]:
         """Return health/online status for all devices."""
         return await self._async_get("/v1/devices/health")

@@ -42,6 +42,7 @@ class HortimaxOnlineSensor(CoordinatorEntity[HortimaxCoordinator], BinarySensorE
         self._attr_unique_id = f"{device_id}::online"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, device_id)},
+            name=coordinator.device_labels.get(device_id),
             manufacturer=MANUFACTURER,
         )
 
