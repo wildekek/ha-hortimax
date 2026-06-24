@@ -40,6 +40,14 @@ Ridder's **Swagger UI** at <https://hortos.ridder.com/api/process-control/index.
 
 The spec confirms there is no enumeration / code-to-label endpoint and that `readoutValueType` is only `Double` or `String`, so the enum-coded Scalars (below) cannot be decoded via the API.
 
+### Hard-won API facts (don't rediscover)
+
+- Real unit identifiers differ from the Swagger examples: `DegreeCelsius` (singular), `Percent`, `Scalar`, `Second`, `Minute`, `Gram/Kilogram`, `Joule/SquareCentimeter`, `Liter/Minute`, `Liter/SquareMeter`, `KilowattHour`, `Watt/SquareMeter`, `Meter/Second`, `CubicMeter`.
+- The `quantity` field in definitions is generic (`Ratio`, `Mass/Mass`, …) — useless for device classes; map from unit + readout identifier instead (see `UNIT_MAP` / `_describe()`).
+- Readout identifiers follow `<CamelCaseSubject>-<Measured|Calculated|ActualSetting>`, plus one Ridder typo: `IrrigationVolume-Measuered`.
+- The API's display `name` embeds the source's userDefinedName (sometimes with trailing whitespace) — don't use it for entity names; `naming.py` derives names from the identifier instead.
+- Unchanged readouts update at most every 5 minutes, so polling faster gains nothing.
+
 ## Architecture
 
 Data flows in one direction: `HortimaxApiClient` (api.py) → `HortimaxCoordinator` (coordinator.py) → entities (sensor.py, binary_sensor.py). One config entry per organisation; `entry.runtime_data` holds the coordinator.
