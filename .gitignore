@@ -1,9 +1,6 @@
 __pycache__/
 .venv/
 
-# Ridder's API documentation — not ours to publish
-postman/
-
 # Local HA test instance (contains the API key in .storage)
 ha-config/
 .DS_Store

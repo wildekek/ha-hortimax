@@ -36,9 +36,9 @@ There is no configured linter, formatter, or pytest suite. Tests are standalone 
 
 ## API reference
 
-`postman/` (gitignored) holds Ridder's **official Postman collection** — it is the source of truth for the HortOS API and is not ours to publish. `api.py`'s module docstring summarises the auth model; consult the collection for endpoint shapes. Key facts: API-key auth at `/v1/auth/apikey` returns a bearer token (15 min) plus refresh token (7 days); rate limit is 100 requests per 15 seconds per key. The integration spends one request per poll plus one per controller.
+Ridder's **Swagger UI** at <https://hortos.ridder.com/api/process-control/index.html> is the source of truth for the HortOS API. The underlying OpenAPI spec is at `{base_url}/v1/swagger.json` (note: *not* the conventional `/swagger/v1/swagger.json`, which 403s), and it is **bearer-auth gated** — fetch it with a token, not anonymously. `api.py`'s module docstring summarises the auth model. Key facts: API-key auth at `/v1/auth/apikey` returns a bearer token (15 min) plus refresh token (7 days); rate limit is 100 requests per 15 seconds per key. The integration spends one request per poll plus one per controller.
 
-Ridder also publishes Swagger UI at <https://hortos.ridder.com/api/process-control/index.html>. The underlying OpenAPI spec is at `{base_url}/v1/swagger.json` (note: *not* the conventional `/swagger/v1/swagger.json`, which 403s), and it is **bearer-auth gated** — fetch it with a token, not anonymously. The spec confirms there is no enumeration / code-to-label endpoint and that `readoutValueType` is only `Double` or `String`, so the enum-coded Scalars (below) cannot be decoded via the API.
+The spec confirms there is no enumeration / code-to-label endpoint and that `readoutValueType` is only `Double` or `String`, so the enum-coded Scalars (below) cannot be decoded via the API.
 
 ## Architecture
 
@@ -74,7 +74,7 @@ Per-readout special cases keyed by the lowercased identifier subject (`_readout_
 
 ### Enum-coded Scalar readouts (gotcha)
 
-Some readouts come through with `unitIdentifier: "Scalar"` and a `Double` value, but the number is **not a measurement** — it is an enumeration member id from a HortOS table the API does not expose (the readout definition's `min`/`max` are null and there is no enumeration endpoint in the Postman collection; the official app resolves the labels). They surface as a meaningless large integer (e.g. ~8780s).
+Some readouts come through with `unitIdentifier: "Scalar"` and a `Double` value, but the number is **not a measurement** — it is an enumeration member id from a HortOS table the API does not expose (the readout definition's `min`/`max` are null and there is no enumeration endpoint in the API; the official app resolves the labels). They surface as a meaningless large integer (e.g. ~8780s).
 
 `CardinalWindDirection-Measured` is the one decoded so far: over a day it took exactly the 16 contiguous codes 8772–8787 (the 16-point compass), and two readings cross-checked against the official app (8782=SW, 8783=WSW) anchored 8772 = N, clockwise in 22.5° steps. It is mapped to a `wind_direction` degrees sensor (`measurement_angle` state class) via the `WIND_DIRECTION_*` constants in `const.py`; only `WIND_DIRECTION_CODE_NORTH` would change if a controller used a different id base.
 

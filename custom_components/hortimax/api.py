@@ -1,6 +1,6 @@
 """Async client for the Ridder HortOS Automation API.
 
-Authentication model (per the official Postman collection):
+Authentication model (per the official Swagger spec):
 - POST /v1/auth/apikey with the API key returns a bearer token (valid 15
   minutes) and a refresh token (valid 7 days).
 - POST /v1/token/refresh exchanges an expired bearer token + refresh token
