@@ -40,6 +40,8 @@ The polling interval (default 60 s) can be changed under the integration's *Conf
 
 The integration authenticates with your API key at `/v1/auth/apikey`, receiving a bearer token (valid 15 minutes) and a refresh token (valid 7 days). Tokens are refreshed automatically; if the API key is revoked, Home Assistant starts a re-authentication flow.
 
+The HortOS API is documented with Swagger UI at <https://hortos.ridder.com/api/process-control/index.html>.
+
 ## Disclaimer
 
 This is an unofficial integration and is not affiliated with Ridder. Use at your own risk.

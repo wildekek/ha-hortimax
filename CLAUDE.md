@@ -38,6 +38,8 @@ There is no configured linter, formatter, or pytest suite. Tests are standalone 
 
 `postman/` (gitignored) holds Ridder's **official Postman collection** — it is the source of truth for the HortOS API and is not ours to publish. `api.py`'s module docstring summarises the auth model; consult the collection for endpoint shapes. Key facts: API-key auth at `/v1/auth/apikey` returns a bearer token (15 min) plus refresh token (7 days); rate limit is 100 requests per 15 seconds per key. The integration spends one request per poll plus one per controller.
 
+Ridder also publishes Swagger UI at <https://hortos.ridder.com/api/process-control/index.html>. The underlying OpenAPI spec is at `{base_url}/v1/swagger.json` (note: *not* the conventional `/swagger/v1/swagger.json`, which 403s), and it is **bearer-auth gated** — fetch it with a token, not anonymously. The spec confirms there is no enumeration / code-to-label endpoint and that `readoutValueType` is only `Double` or `String`, so the enum-coded Scalars (below) cannot be decoded via the API.
+
 ## Architecture
 
 Data flows in one direction: `HortimaxApiClient` (api.py) → `HortimaxCoordinator` (coordinator.py) → entities (sensor.py, binary_sensor.py). One config entry per organisation; `entry.runtime_data` holds the coordinator.
