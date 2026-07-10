@@ -1,4 +1,4 @@
-<img src="assets/brands/hortimax/icon.png" alt="HortOS shield" width="96" align="right"/>
+<img src="custom_components/hortimax/brand/icon.png" alt="HortOS shield" width="96" align="right"/>
 
 # Ridder HortiMaX Pro (HortOS) for Home Assistant
 
